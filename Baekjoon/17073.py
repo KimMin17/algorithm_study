@@ -8,24 +8,28 @@ n, w = tuple(map(int, input().split()))
 node_list = [[] for _ in range(n+1)]
 
 for _ in range(n-1):
-    p, c = tuple(map(int, input().split()))
-    node_list[p].append(c)
-
-for node in node_list:
-    print(*node)
+    a, b = tuple(map(int, input().split()))
+    node_list[a].append(b)
+    node_list[b].append(a)
 
 q = deque()
-scale = 1
-q.append([0, 1 * scale])
+visited = [False] * (n+1)
 
-p_list = []
+q.append(1)
+visited[1] = True
+
+leaf_count = 0
 
 while q:
-    cur, cur_p = tuple(q.popleft())
-    cur_child_num = len(node_list[cur])
-    if cur_child_num == 0: p_list.append(cur_p)
-    else:
-        child_p = cur_p / cur_child_num
-        for child in node_list[cur]: q.append([child, child_p])
+    cur = q.popleft()
+    is_leaf = True
 
-print(*p_list)
+    for child in node_list[cur]:
+        if visited[child] == True: continue
+        q.append(child)
+        visited[child] = True
+        is_leaf = False
+    
+    if is_leaf: leaf_count += 1
+
+print("{:.6f}".format(w / leaf_count))
