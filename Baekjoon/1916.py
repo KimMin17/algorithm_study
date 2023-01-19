@@ -1,21 +1,21 @@
 from queue import PriorityQueue
 
-n, m = map(int, input().split())
+n = int(input())
+m = int(input())
 n += 1
 
-INF = 20000
-dist = [INF] * n
+INF = 10000000000000
 graph = [[INF] * n for _ in range(n)]
 
 for _ in range(m):
-    v1, v2, d = map(int, input().split())
-    graph[v1][v2] = d
-    graph[v2][v1] = d
+    v1, v2, c = map(int, input().split())
+    graph[v1][v2] = c
+    graph[v2][v1] = c
 
 for i in range(n):
-    graph[n][n] = 0
+    graph[i][i] = 0
 
-start, dest = 1, 2
+start, dest = map(int, input().split())
 
 def dijkstra(start):
     dist = [INF] * n
@@ -41,20 +41,5 @@ def dijkstra(start):
 
     return dist
 
-dist = dijkstra(dest)
-start_cost = dist[start]
-
-dp = [[-1] * n for _ in range(n)]
-
-def dfs(start, dest):
-    if dp[start][dest] != -1: return dp[start][dest]
-    if start == dest: return 1
-    
-    result = 0
-    for i in range(n):
-        if graph[start][i] != INF:
-            result += dfs(i, dest)
-    dp[start][dest] = result
-    return result
-
-print(dfs(start, dest))
+dist = dijkstra(start)
+print(dist[dest])
