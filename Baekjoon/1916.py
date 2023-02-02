@@ -9,8 +9,7 @@ graph = [[INF] * n for _ in range(n)]
 
 for _ in range(m):
     v1, v2, c = map(int, input().split())
-    graph[v1][v2] = c
-    graph[v2][v1] = c
+    graph[v1][v2] = min(graph[v1][v2], c)
 
 for i in range(n):
     graph[i][i] = 0
@@ -19,25 +18,21 @@ start, dest = map(int, input().split())
 
 def dijkstra(start):
     dist = [INF] * n
-    visited = [False] * n
-    visited[0] = True
+    dist[start] = 0
 
-    for i in range(n):
-        dist[i] = graph[start][i]
-    
-    q = PriorityQueue()
-    q.put((0, start))
+    pq = PriorityQueue()
+    pq.put((0, start))
 
-    while not q.empty():
-        next_dist, next_node = q.get()
-        visited[next_node] = True
-        for i in range(1, n):
-            cost = next_dist + graph[next_node][i]
-            dist[i] = min(dist[i], cost)
+    while not pq.empty():
+        cur_cost, cur_node = pq.get()
 
-            if not visited[i]:
-                q.put((dist[i], i))
-                visited[i] = True
+        if dist[cur_node] < cur_cost: continue
+
+        for next_node in range(n):
+            next_cost = graph[cur_node][next_node]
+            if dist[next_node] > cur_cost + next_cost:
+                dist[next_node] = cur_cost + next_cost
+                pq.put((cur_cost + next_cost, next_node))
 
     return dist
 

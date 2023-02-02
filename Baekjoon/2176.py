@@ -51,12 +51,16 @@ limit_number = 200000
 sys.setrecursionlimit(limit_number)
 
 n, m = map(int, sys.stdin.readline().rstrip().split())
+
 nodes = [[] for _ in range(n+1)]
+
 for _ in range(m):
     a, b, c = map(int, sys.stdin.readline().rstrip().split())
     nodes[a].append([b, c])
     nodes[b].append([a, c])
+    
 INF = sys.maxsize
+
 def Dijsktra(start):
     distances = [INF for _ in range(n+1)]
     distances[start] = 0
