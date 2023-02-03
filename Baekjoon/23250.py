@@ -16,7 +16,6 @@ def solve(n, start, end, mid):
         if step_counter == k:
             print(start, end)
             exit()
-        pass
     else:
         solve(n-1, start, mid, end)
         step_counter += 1
