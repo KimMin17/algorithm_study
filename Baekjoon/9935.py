@@ -1,15 +1,25 @@
-def kmp():
-    pass
+from collections import deque
 
 text = input()
 bomb = input()
 
-while True:
-    if len(text) == 0:
-        text = "FRULA"
-        break
-    loc = text.find(bomb)
-    if loc == -1: break
-    text = text[:loc] + text[loc+len(bomb):]
+bomb_len = len(bomb)
+bomb_last_alph = bomb[-1]
 
-print(text)
+stack = deque()
+
+for alph in text:
+    stack.append(alph)
+    if alph == bomb_last_alph:
+        check = ""
+        if len(stack) >= bomb_len:
+            for _ in range(bomb_len):
+                check = stack.pop() + check
+            if check != bomb:
+                for item in check: stack.append(item)
+
+if len(stack) == 0:
+    print("FRULA")
+else:
+    while stack:
+        print(stack.popleft(), end = "")
