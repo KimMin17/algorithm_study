@@ -5,7 +5,9 @@ input = sys.stdin.readline
 w, h = map(int, input().split())
 
 front = []
+front_reverse = []
 side = []
+side_reverse = []
 
 for _ in range(w):
     front.append(int(input()))
@@ -13,49 +15,25 @@ for _ in range(w):
 for _ in range(h):
     side.append(int(input()))
 
-front.sort()
-side.sort()
-
-front_height = front[-1]
-side_height = front[-1]
-
-if front_height != side_height:
-    print("-1")
-    exit()
-
-front_floor = [0] * front_height
-side_floor = [0] * side_height
-
-idx = 0
-i = 0
-while i < front_height and idx < len(front):
-    if front[idx] > i:
-        front_floor[i] = len(front) - idx
-        i += 1
-    else:
-        idx += 1
-
-idx = 0
-i = 0
-while i < side_height and idx < len(side):
-    if side[idx] > i:
-        side_floor[i] = len(side) - idx
-        i += 1
-    else:
-        idx += 1
+front_height = max(front)
+side_height = max(side)
 
 def calc_min():
     total = 0
-    for i in range(len(front_floor)):
+    for i in range(front_height):
         front_num = front.count(i+1)
         side_num = side.count(i+1)
         total += (i+1) * max(front_num, side_num)
     return total
 
 def calc_max():
+    front.sort()
+    side.sort()
+
     total = 0
-    for i in range(front_height):
-        total += front_floor[i] * side_floor[i]
+    for f in front:
+        for s in side:
+            total += min(f, s)
     return total
 
 print(calc_min(), calc_max())
