@@ -20,10 +20,8 @@ def crash(egg1, egg2):
     eggs[egg1][0] -= eggs[egg2][1]
     eggs[egg2][0] -= eggs[egg1][1]
     result = 0
-    if eggs[egg1][0] <= 0:
-        result += 1
-    if eggs[egg2][0] <= 0:
-        result += 1
+    if is_broken(egg1): result += 1
+    if is_broken(egg2): result += 1
     return result
 
 def undo(egg1, egg2):
@@ -31,20 +29,20 @@ def undo(egg1, egg2):
     eggs[egg2][0] += eggs[egg1][1]
 
 answer = 0
-def dfs(egg_num, broken_egg_num):
-    global answer
-    if egg_num == n:
-        answer = max(answer, broken_egg_num)
-        return
-    
-    if is_broken(egg_num):
-        dfs(egg_num+1, broken_egg_num)
 
-    for i in range(n):
-        if i == egg_num or is_broken(i): continue
-        result = crash(egg_num, i)
-        dfs(egg_num + 1, broken_egg_num + result)
-        undo(egg_num, i)
+def dfs(cur_egg, broken_num):
+    global answer
+    if cur_egg == n:
+        answer = max(answer, broken_num)
+    elif is_broken(cur_egg):
+        dfs(cur_egg+1, broken_num)
+    else:
+        for next_egg in range(n):
+            if next_egg == cur_egg or is_broken(next_egg): continue
+            new_broken = crash(cur_egg, next_egg)
+            answer = max(answer, broken_num+new_broken)
+            dfs(cur_egg+1, broken_num+new_broken)
+            undo(cur_egg, next_egg)
 
 dfs(0, 0)
 print(answer)
