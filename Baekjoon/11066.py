@@ -1,7 +1,20 @@
+import sys
+
+input = sys.stdin.readline
+
 dp = None
+sums = None
+
+INF = 10**9
+
+def get_slice_sum(start, end):
+    global sums
+    if start == 0: return sums[end]
+    else: return sums[end] - sums[start-1]
 
 def dfs(start, end, l):
-    if dp[start][end] != 10**9: return dp[start][end]
+    if dp[start][end] != INF:
+        return dp[start][end]
 
     if end - start == 1:
         dp[start][end] = l[start] + l[end]
@@ -9,28 +22,19 @@ def dfs(start, end, l):
     
     for i in range(start, end):
         dp[start][end] = min(dp[start][end], dfs(start, i, l) + dfs(i+1, end, l))
+    dp[start][end] += get_slice_sum(start, end)
     return dp[start][end]
-
-def trace(start, end):
-    if end - start == 2:
-        return dp[start][end]
-    result = 0
-    for i in range(start, end):
-        if dp[start][i] + dp[i+1][end] == dp[start][end]:
-            result += trace(start, i)
-            result += trace(i+1, end)
-            break
-    result += dp[start][end]
-    return result
 
 def solve(n, l):
     global dp
-    dp = [[10**9] * n for _ in range(n)]
-    for i in range(n): dp[i][i] = l[i]
-
+    global sums
+    dp = [[INF] * n for _ in range(n)]
+    sums = [0] * n
+    for i in range(n): dp[i][i] = 0
+    sums[0] = l[0]
+    for i in range(1, n): sums[i] = sums[i-1] + l[i]
     dfs(0, n-1, l)
-    print(dp[0][n-1])
-    return trace(0, n-1)
+    return dp[0][n-1]
 
 testcase = int(input())
 
