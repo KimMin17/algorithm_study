@@ -1,44 +1,48 @@
 n = int(input())
 
-ip_list = []
+cur_light = list(map(int, input()))
+target_light = list(map(int, input()))
 
-def conv_ip(ip):
-    result = 0
-    exp = 1
+temp_light = [cur_light[i] for i in range(n)]
 
-    for i in reversed(range(4)):
-        result += (int(ip[i]) * exp)
-        exp <<= 8
+def change_light(i):
+    global n
+    if 0 <= i-1 < n:
+        cur_light[i-1] += 1
+        cur_light[i-1] %= 2
+    if 0 <= i < n:
+        cur_light[i] += 1
+        cur_light[i] %= 2
+    if 0 <= i+1 < n:
+        cur_light[i+1] += 1
+        cur_light[i+1] %= 2
+    
+answer = 0
+for i in range(0, n-1):
+    if cur_light[i] != target_light[i]:
+        change_light(i+1)
+        answer += 1
 
-    return result
+for i in range(n):
+    if cur_light[i] != target_light[i]:
+        answer = -1
+        break
 
-for _ in range(n):
-    ip_list.append(conv_ip(input().split(".")))
+if answer != -1:
+    print(answer)
+    exit()
 
-full_mask = (1 << 32) - 1
-mask = full_mask
+another_answer = 1
+cur_light = [temp_light[i] for i in range(n)]
+change_light(0)
 
-def get_mask(mask):
-    global full_mask
-    while mask:
-        network = ip_list[0] & mask
-        flag = True
-        for i in range(1, n):
-            if network != (ip_list[i] & mask):
-                mask = (mask << 1) & full_mask
-                flag = False
-                break
-        if flag: return mask
-    return 0
+for i in range(0, n-1):
+    if cur_light[i] != target_light[i]:
+        change_light(i+1)
+        another_answer += 1
 
-mask = get_mask(mask)
-
-def conv_bin(b):
-    result = []
-    for _ in range(4):
-        result.insert(0, b % 256)
-        b //= 256
-    return result
-
-print(".".join(map(str, conv_bin(mask & ip_list[0]))))
-print(".".join(map(str, conv_bin(mask))))
+for i in range(n):
+    if cur_light[i] != target_light[i]:
+        another_answer = -1
+        break
+print(another_answer)
